@@ -5,17 +5,11 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'foo.views.home', name='home'),
-    # url(r'^foo/', include('foo.foo.urls')),
-
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    (r'^', include('blog.urls')),
+    (r'^api/', include('api.urls')),
     url(r'^admin/', include(admin.site.urls)),
-
-    # required url to login so you can authorize token
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 )
 

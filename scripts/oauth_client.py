@@ -40,7 +40,8 @@ print
 # below.
 
 print "Go to the following link in your browser:"
-print "%s?oauth_token=%s" % (AUTHORIZE_URL, request_token['oauth_token'])
+print "%s?oauth_token=%s&oauth_callback=%s" % \
+      (AUTHORIZE_URL, request_token['oauth_token'], 'http://www.openpolis.it')
 print
 
 # After the user has granted access to you, the consumer, the provider will

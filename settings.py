@@ -1,5 +1,7 @@
-# Django settings for foo project.
+# Django settings for project.
 import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 here = lambda path: os.path.join(os.path.realpath(os.path.dirname(__file__)), path)
 
 DEBUG = True
@@ -13,13 +15,9 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'db',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
+        'NAME': os.path.join(BASE_DIR, 'db'),
+        'ENGINE': 'django.db.backends.sqlite3',
+    },
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -102,13 +100,12 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'foo.urls'
+ROOT_URLCONF = 'urls'
+
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-    here('./templates/'),
+    os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'piston/templates'),
 )
 
 INSTALLED_APPS = (
@@ -123,6 +120,8 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'piston',
+    'blog',
+    'api',
 )
 
 # A sample logging configuration. The only tangible logging
