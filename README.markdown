@@ -53,8 +53,9 @@ I added [twisted](http://twistedmatrix.com/trac/)'s [oauth-proxy](https://github
     
 1. launch twisted oauth-proxy ($KEY and $SECRET must be substituted manually in the command line)
 
-    cd oauth-proxy
-    twistd -n oauth_proxy --consumer-key testkey --consumer-secret testsecret --token $KEY --token-secret $SECRET
+    `cd oauth-proxy`
+    
+    `twistd -n oauth_proxy --consumer-key testkey --consumer-secret testsecret --token $KEY --token-secret $SECRET`
 
 1. try accessing the posts through the oauth-proxy, you should get
 
