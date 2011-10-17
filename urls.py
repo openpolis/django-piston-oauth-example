@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
 )
 
-# piston, oauth urls
+# piston, oauth urls (used in three-legged authentication)
 urlpatterns += patterns(
     'piston.authentication',
     url(r'^oauth/request_token/$','oauth_request_token'),

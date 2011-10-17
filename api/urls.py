@@ -4,9 +4,9 @@ from piston.resource import Resource
 from api.authentication import TwoLeggedOAuthAuthentication
 from api.handlers import BlogpostHandler
 
-#auth = HttpBasicAuthentication(realm='My sample API')
-# auth = OAuthAuthentication(realm="Test Realm")
-auth = TwoLeggedOAuthAuthentication(realm='API')
+# auth = HttpBasicAuthentication(ealm='Example Blog API')
+# auth = OAuthAuthentication(ealm='Example Blog API')
+auth = TwoLeggedOAuthAuthentication(realm='Example Blog API')
 
 class CsrfExemptResource( Resource ):
     def __init__( self, handler, authentication = None ):
@@ -21,11 +21,4 @@ blogposts = TwoLeggedOAuthProtectedResource(handler=BlogpostHandler)
 urlpatterns = patterns('',
     url(r'^posts\.(?P<emitter_format>.+)', blogposts, name='blogposts'),
     # automated documentation url(r'^$', documentation_view),
-)
-
-urlpatterns += patterns(
-    'piston.authentication',
-    url(r'^oauth/request_token/$','oauth_request_token'),
-    url(r'^oauth/authorize/$','oauth_user_auth'),
-    url(r'^oauth/access_token/$','oauth_access_token'),
 )
