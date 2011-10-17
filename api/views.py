@@ -10,7 +10,17 @@ class PostSummaryView(PistonView):
             'title',
             Field('author.username', destination='author'),
             Field('', lambda x: x.created_on.strftime("%m/%d/%y"), destination='date_created'),
-            ]
+    ]
+
+
+class PostDetailedView(PistonView):
+    fields = [
+            'title',
+            'content',
+            Field('author.username', destination='author'),
+            Field('', lambda x: x.created_on.strftime("%m/%d/%y at %H:%M"), destination='time_created'),
+    ]
+
 
 def request_token_ready(request, token):
     error = request.GET.get('error', '')
