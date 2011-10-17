@@ -74,11 +74,8 @@ According to this [cakebaker's post](http://cakebaker.42dh.com/2011/01/10/2-legg
 > * Client has signed up to the server and got his client credentials (also known as “consumer key and secret”)
 > * Client uses his client credentials (and empty token credentials) to access the protected resources on the server
 
-In order to enable two-legged authentication for this example project:
+This example already allows the two-legged authentication workflow, without any addition. To test it:
 
-1. go to gregbayer's [https://github.com/gregbayer/django-piston-two-legged-oauth](https://github.com/gregbayer/django-piston-two-legged-oauth)
-1. copy `src/authentication.py` content into your `api/authentication.py` file
-1. modify your api/urls.py file so that it looks like the one below (YMMV)
 1. launch twisted oauth-proxy, using 'empty' access token key and secret
 
     cd oauth-proxy
@@ -88,41 +85,81 @@ In order to enable two-legged authentication for this example project:
 
     `curl -x localhost:8001 "http://localhost:8000/api/posts.yaml"`
 
-Now, your application is able to expose resources both through the three-legged and the two-legged authentication workflow.
+## Advanced piston features
+[PBS education's piston](https://github.com/pbs-education/django-piston) introduces many customisations.
+
+### PistonView class
+It is possible to define the exposed objects' views directly in the views file, using extensions of
+the PistonView class.
+
+\# api/views.py
+
+    from django.shortcuts import render_to_response
+    from django.template import RequestContext
+    import datetime
+    from piston.handler import PistonView, Field
 
 
-\# urls.py
+    class PostSummaryView(PistonView):
+        fields = [
+                'id',
+                'title',
+                Field('author.username', destination='author'),
+                Field('', lambda x: x.created_on.strftime("%m/%d/%y"), destination='date_created'),
+                ]
+
+    def request_token_ready(request, token):
+        error = request.GET.get('error', '')
+        ctx = RequestContext(request, {
+            'error' : error,
+            'token' : token
+        })
+        return render_to_response(
+            'piston/request_token_ready.html',
+            context_instance = ctx
+        )
+
+
+\# api/handlers.py
+
+    from piston.handler import BaseHandler, AnonymousBaseHandler
+    from piston.utils import rc, require_mime, require_extended
+
+    from blog.models import Blogpost
+    from api.views import PostSummaryView
+
+    class BlogpostHandler(BaseHandler):
+        """
+        Authenticated entrypoint for blogposts.
+        """
+        model = Blogpost
+    
+        def read(self, request, id=None):
+            base = Blogpost.objects
+            if id is None:
+                return base.all()
+            return PostSummaryView(base.get(pk=id))
+
+\# api/urls.py
 
     from django.conf.urls.defaults import *
     from piston.resource import Resource
-    from api.authentication import TwoLeggedOAuthAuthentication
+    from piston.authentication import OAuthAuthentication
     from api.handlers import BlogpostHandler
 
-    #auth = HttpBasicAuthentication(realm='My sample API')
-    # auth = OAuthAuthentication(realm="Test Realm")
-    auth = TwoLeggedOAuthAuthentication(realm='API')
+    auth = OAuthAuthentication(realm='Example Blog API')
 
     class CsrfExemptResource( Resource ):
         def __init__( self, handler, authentication = None ):
             super( CsrfExemptResource, self ).__init__( handler, authentication )
             self.csrf_exempt = getattr( self.handler, 'csrf_exempt', True )
 
-    def TwoLeggedOAuthProtectedResource(handler):
-        return CsrfExemptResource(handler=handler, authentication=auth)
-
-    blogposts = TwoLeggedOAuthProtectedResource(handler=BlogpostHandler)
+    blogposts = CsrfExemptResource(handler=BlogpostHandler, authentication=auth)
 
     urlpatterns = patterns('',
-        url(r'^posts\.(?P<emitter_format>.+)', blogposts, name='blogposts'),
+        url(r'^posts\.(?P<emitter_format>.+)$', blogposts, name='blogposts'),
+        url(r'^posts/(?P<id>[^/]+)\.(?P<emitter_format>.+)$', blogposts, name='blogpost'), 
         # automated documentation url(r'^$', documentation_view),
     )
-
-    urlpatterns += patterns(
-        'piston.authentication',
-        url(r'^oauth/request_token/$','oauth_request_token'),
-        url(r'^oauth/authorize/$','oauth_user_auth'),
-        url(r'^oauth/access_token/$','oauth_access_token'),
-    )
-
 
 

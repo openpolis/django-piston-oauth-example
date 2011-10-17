@@ -2,6 +2,7 @@ from piston.handler import BaseHandler, AnonymousBaseHandler
 from piston.utils import rc, require_mime, require_extended
 
 from blog.models import Blogpost
+from api.views import PostSummaryView
 
 class BlogpostHandler(BaseHandler):
     """
@@ -9,13 +10,12 @@ class BlogpostHandler(BaseHandler):
     """
     model = Blogpost
     
-    def read(self, request, title=None): # title=None):
+    def read(self, request, id=None):
         base = Blogpost.objects
-        
-        if title is not None:
-            return base.get(title=title)
-        else:
+        if id is None:
             return base.all()
+        return PostSummaryView(base.get(pk=id))
+    
     
     def create(self, request):
         """ Creates a new blogpost.  """
