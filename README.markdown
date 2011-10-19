@@ -91,3 +91,14 @@ To test it:
 
     `curl -x localhost:8001 "http://localhost:8000/api/posts.yaml"`
 
+
+### Remote insertion using POST
+Using the two-legged authentication, whenever trying to insert a new Blogppost, using:
+
+    `curl -x localhost:8001 "http://localhost:8000/api/posts.yaml" -F title "Sample title" -F content "Sample content"`
+    
+The server sends the "OAuth Authorization Required" message. 
+
+Trying the same operation using the three-legged authentication it works like a charm.
+It may have to do with the fact that content must be always be inserted by registered user, I am still investigating.
+

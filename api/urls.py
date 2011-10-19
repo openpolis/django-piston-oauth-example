@@ -6,10 +6,10 @@ from api.handlers import BlogpostHandler
 
 
 # two-legged
-# auth = TwoLeggedOAuthAuthentication(realm='ExampleAPI')
+auth = TwoLeggedOAuthAuthentication(realm='ExampleAPI')
 
 # three-legged
-auth = OAuthAuthentication(realm='ExampleAPI')
+# auth = OAuthAuthentication(realm='ExampleAPI')
 
 
 class CsrfExemptResource( Resource ):
