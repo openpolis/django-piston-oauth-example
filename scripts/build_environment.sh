@@ -2,6 +2,8 @@
 
 pip install django
 
+pip install django-piston
+
 # needed for twisted
 pip install oauth
 pip install twisted

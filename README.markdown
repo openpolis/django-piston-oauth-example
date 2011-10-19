@@ -9,6 +9,11 @@ I like the fact that glogiotatidis uses the [piston release from pbs education](
 It seems to me that there's more activity there than in the original [jespern](https://bitbucket.org/jespern/django-piston/wiki/Home)'s project.
 So I want to try and use it for my project.
 
+### Update
+I cannot use piston release from pbs, since, it generates an error while inserting  data through POST. 
+So I have to revert to the original jensen's piston code, and leave the advanced, customised features behind.
+I will try to integrate it, somehow, once I got a better understanding of the code itself.
+
 I added [twisted](http://twistedmatrix.com/trac/)'s [oauth-proxy](https://github.com/mojodna/oauth-proxy) plugin, so now twisted is part of the required packages to install. It is useful to quickly test oauth-request, by wrapping the oauth-part in a proxy. More on this below...
 
 ## Install
@@ -29,21 +34,21 @@ I added [twisted](http://twistedmatrix.com/trac/)'s [oauth-proxy](https://github
     
 1. create dbs, create superuser
 
-    `pythom manage.py syncdb`
+    `django-admin.py syncdb`
     
 1. start server
 
-    `python manage.py runserver`
+    `django-admin.py runserver`
     
 1. login to admin panel through http://localhost:8000/admin/
-  * Create a new Consumer with Key: testkey and Secret: testsecret
+  * Create a new Consumer with Key: `testkey` and Secret: `testsecret`
   * Create a test blog post
 1. Your app is now accepting oauth-requests
 
 ## Try
 1. Make sure that server runs
 1. Make sure that you have activated the environment
-1. Run oauth_client.py and follow the instructions 
+1. Run `oauth_client.py` and follow the instructions 
    * be sure to browse the authentication url!
    * insert some fake PIN when requested (3098)
 1. You should end up with a oauth_token and a oauth_token_secret printed on screen
@@ -74,7 +79,8 @@ According to this [cakebaker's post](http://cakebaker.42dh.com/2011/01/10/2-legg
 > * Client has signed up to the server and got his client credentials (also known as “consumer key and secret”)
 > * Client uses his client credentials (and empty token credentials) to access the protected resources on the server
 
-This example already allows the two-legged authentication workflow, without any addition. To test it:
+This example already allows the two-legged authentication workflow, through the api/authentication.py file, grabbed from https://github.com/gregbayer/django-piston-two-legged-oauth. 
+To test it:
 
 1. launch twisted oauth-proxy, using 'empty' access token key and secret
 

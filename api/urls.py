@@ -1,9 +1,16 @@
 from django.conf.urls.defaults import *
 from piston.resource import Resource
 from piston.authentication import HttpBasicAuthentication, OAuthAuthentication
+from api.authentication import TwoLeggedOAuthAuthentication
 from api.handlers import BlogpostHandler
 
-auth = OAuthAuthentication(realm='Example Blog API')
+
+# two-legged
+# auth = TwoLeggedOAuthAuthentication(realm='ExampleAPI')
+
+# three-legged
+auth = OAuthAuthentication(realm='ExampleAPI')
+
 
 class CsrfExemptResource( Resource ):
     def __init__( self, handler, authentication = None ):

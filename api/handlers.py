@@ -1,9 +1,9 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
 from piston.utils import rc, require_mime, require_extended
-from piston.resource import PistonNotFoundException
-
 from blog.models import Blogpost
-from api.views import PostSummaryView, PostDetailedView
+
+from django.contrib.auth.decorators import login_required
+
 
 class BlogpostHandler(BaseHandler):
     """
@@ -14,14 +14,15 @@ class BlogpostHandler(BaseHandler):
     def read(self, request, id=None):
         base = Blogpost.objects
         if id is None:
-            return PostSummaryView([x for x in base.all()])
+            # return PostSummaryView([x for x in base.all()])
+            return [{'title': x.title, 'author': x.author.username} for x in base.all()]
         else:
             try:
                 post = base.get(id=id)
             except Blogpost.DoesNotExist:
-                raise PistonNotFoundException('Error retrieving post with ID %s: not found' % id)
-            return PostDetailedView(post)
-    
+                raise Exception('Error retrieving post with ID %s: not found' % id)
+            # return PostDetailedView(post)
+            return post
     
     def create(self, request):
         """ Creates a new blogpost.  """
