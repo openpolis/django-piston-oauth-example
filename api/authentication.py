@@ -6,7 +6,6 @@ from django.http import HttpResponse
 from django.contrib.auth.models import AnonymousUser
 
 from piston.models import Consumer
-from piston.oauth import OAuthError
 
 """
 This is a simple 2-legged OAuth connector for django piston.
@@ -48,9 +47,12 @@ class TwoLeggedOAuthAuthentication(object):
                 logging.error('TwoLeggedOAuthAuthentication. No consumer_key found.')
                 return None
             # Raises exception if it doesn't pass 
-            oauth_server.verify_request(oauth_request, get_consumer(key), None)
+            consumer = get_consumer(key)
+            oauth_server.verify_request(oauth_request, consumer, None)
             # If OAuth authentication is successful, set oauth_consumer_key on request in case we need it later 
             request.META['oauth_consumer_key'] = key
+            request.user = consumer.user
+            request.throttle_extra = consumer.id
             return True
         except oauth2.Error, e:
             logging.exception("Error in TwoLeggedOAuthAuthentication.")
@@ -127,7 +129,7 @@ def get_oauth_consumer_key_from_header(auth_header_value):
 def get_consumer(oauth_consumer_key):
     consumer = lookup_consumer(oauth_consumer_key)
     if not consumer:
-        raise OAuthError('Invalid consumer.')
+        raise oauth2.Error('Invalid consumer.')
     return consumer
 
 

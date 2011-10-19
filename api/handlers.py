@@ -1,5 +1,5 @@
 from piston.handler import BaseHandler, AnonymousBaseHandler
-from piston.utils import rc, require_mime, require_extended
+from piston.utils import rc, require_mime, require_extended, throttle
 from blog.models import Blogpost
 
 from django.contrib.auth.decorators import login_required
@@ -11,6 +11,7 @@ class BlogpostHandler(BaseHandler):
     """
     model = Blogpost
     
+    @throttle(5, 30)
     def read(self, request, id=None):
         base = Blogpost.objects
         if id is None:
